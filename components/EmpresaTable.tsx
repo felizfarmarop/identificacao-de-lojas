@@ -9,6 +9,7 @@ import FloatingPrintList from './FloatingPrintList'
 import { FutureFeaturesModal } from './FutureFeaturesModal'
 import { Empresa, stores } from '../data/stores'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+import ShareButton from './ShareButton'
 
 export default function EmpresaTable() {
   const [filter, setFilter] = useState('')
@@ -59,6 +60,7 @@ export default function EmpresaTable() {
           onChange={(e) => setFilter(e.target.value)}
           className="ml-4 mr-4 w-full"
         />
+        <ShareButton />
       </div>
       <Table>
         <TableHeader>
