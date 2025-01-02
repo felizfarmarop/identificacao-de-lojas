@@ -14,12 +14,14 @@ interface FloatingPrintListProps {
 }
 
 export default function FloatingPrintList({ printList, setPrintList, isExpanded, setIsExpanded }: FloatingPrintListProps) {
+
   const [fontSize, setFontSize] = useState('100')
   const [fontColor, setFontColor] = useState('#000000')
 
   useEffect(() => {
     localStorage?.setItem('fontSize', fontSize)
     localStorage?.setItem('fontColor', fontColor)
+
   }, [fontSize, fontColor])
 
   const removeSigla = (index: number) => {
@@ -89,7 +91,9 @@ export default function FloatingPrintList({ printList, setPrintList, isExpanded,
               onChange={(e) => {
                 const newSize = e.target.value
                 setFontSize(newSize)
+
                 localStorage?.setItem('fontSize', newSize)
+
               }}
               className="w-20"
             />
@@ -99,7 +103,9 @@ export default function FloatingPrintList({ printList, setPrintList, isExpanded,
               onChange={(e) => {
                 const newColor = e.target.value
                 setFontColor(newColor)
+
                 localStorage?.setItem('fontColor', newColor)
+
               }}
               className="w-20 p-0"
             />
