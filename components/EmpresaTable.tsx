@@ -14,7 +14,7 @@ export default function EmpresaTable() {
   const [filter, setFilter] = useState('')
   const [printList, setPrintList] = useState<string[]>([])
   const [isPrintListExpanded, setIsPrintListExpanded] = useState(false);
-  const [empresas, setEmpresas] = useState<Empresa[]>(stores);
+  const [empresas] = useState<Empresa[]>(stores);
 
   const filteredEmpresas = empresas.filter(empresa => {
     const searchTerm = filter.toLowerCase();

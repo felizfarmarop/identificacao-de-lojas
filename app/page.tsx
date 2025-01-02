@@ -1,3 +1,5 @@
+'use client';
+
 import EmpresaTable from '../components/EmpresaTable'
 
 export default function Home() {
