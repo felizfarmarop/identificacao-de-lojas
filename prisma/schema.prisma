@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Store {
+  acronym     String @id @map("_id")
+  tradeName   String
+  companyName String
+  cnpj        String @unique
+}
+
+model StoreSuggestion {
+  acronym     String @id @map("_id")
+  tradeName   String
+  companyName String
+  cnpj        String @unique
+}
