@@ -54,7 +54,7 @@ export class Store {
   }
 
   static async findOneByAcronym(acronym: string) {
-    const result = await database.store.findUnique({
+    const result = await database.store.findFirst({
       where: { acronym: acronym },
     });
 
@@ -63,7 +63,7 @@ export class Store {
   }
 
   static async findOneByCpnj(cnpj: string) {
-    const result = await database.store.findUnique({
+    const result = await database.store.findFirst({
       where: { cnpj: cnpj },
     });
 
