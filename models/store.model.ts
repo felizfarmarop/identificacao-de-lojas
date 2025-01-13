@@ -54,7 +54,9 @@ export class Store {
   }
 
   static async findOneByAcronym(acronym: string) {
-    const result = await database.store.findUnique({
+
+    const result = await database.store.findFirst({
+
       where: { acronym: acronym },
     });
 
@@ -63,7 +65,9 @@ export class Store {
   }
 
   static async findOneByCpnj(cnpj: string) {
-    const result = await database.store.findUnique({
+
+    const result = await database.store.findFirst({
+
       where: { cnpj: cnpj },
     });
 
@@ -71,7 +75,11 @@ export class Store {
     else return undefined;
   }
   static async findMany() {
-    const result = await database.store.findMany();
+
+    const result = await database.store.findMany({
+      include: { suggestions: true },
+    });
+
 
     if (result.length) return result.map((store) => new Store(store));
     else return [];

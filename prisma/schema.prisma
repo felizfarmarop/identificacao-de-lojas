@@ -8,15 +8,21 @@ datasource db {
 }
 
 model Store {
-  acronym     String @id @map("_id")
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  acronym     String
   tradeName   String
   companyName String
-  cnpj        String @unique
+  cnpj        String
+  suggestions StoreSuggestion[]
 }
 
 model StoreSuggestion {
-  acronym     String @id @map("_id")
-  tradeName   String
-  companyName String
-  cnpj        String @unique
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  referenceId Store   @relation(fields: [storeId], references: [id])
+  acronym     String?
+  tradeName   String?
+  companyName String?
+  cnpj        String?
+  storeId     String  @db.ObjectId
+
 }
