@@ -4,7 +4,7 @@ import { HttpStatusCode } from "@/infra/httpStatusCode";
 import { Store } from "@/models/store.model";
 import { Store as TStore } from "@prisma/client";
 
-type StoreProps = { stores: TStore[] };
+type StoreProps = { stores: Partial<TStore>[] };
 
 const handleGetStoreList: Middleware<StoreProps> = async (_, ctx, next) => {
   const stores = await Store.findMany();
