@@ -71,7 +71,9 @@ export class Store {
     else return undefined;
   }
   static async findMany() {
-    const result = await database.store.findMany();
+    const result = await database.store.findMany({
+      include: { suggestions: true },
+    });
 
     if (result.length) return result.map((store) => new Store(store));
     else return [];
