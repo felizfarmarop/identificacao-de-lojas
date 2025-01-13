@@ -1,9 +1,11 @@
 import { z } from "zod";
+
 import { ObjectId } from "bson";
 
 export const idSchema = z
   .string()
   .refine((id) => ObjectId.isValid(id), "ID deve ser um ObjectID Válido");
+
 
 export const acronymSchema = z
   .string({ required_error: "ACRONYM é um campo obrigatório" })
@@ -34,7 +36,9 @@ export const tradeNameSchema = z
   .transform((a) => a.toUpperCase());
 
 export const StoreSchema = z.object({
+
   id: idSchema,
+
   acronym: acronymSchema,
   cnpj: cnpjSchema,
   companyName: companyNameSchema,

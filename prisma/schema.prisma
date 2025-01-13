@@ -24,4 +24,5 @@ model StoreSuggestion {
   companyName String?
   cnpj        String?
   storeId     String  @db.ObjectId
+
 }

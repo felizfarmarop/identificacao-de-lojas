@@ -3,9 +3,11 @@ import { type Store as TStore } from "@prisma/client";
 import { StoreSchema } from "./store.validator";
 import { ZodError } from "zod";
 
+
 type CreateStoreSuggestionProps = Partial<TStore> & {
   storeId: string;
 };
+
 
 export class StoreSuggestion {
   acronym: TStore["acronym"];
@@ -20,7 +22,9 @@ export class StoreSuggestion {
     this.cnpj = props.cnpj;
   }
 
+
   static async create({ storeId, ...props }: CreateStoreSuggestionProps) {
+
     let result = props;
 
     try {
@@ -31,6 +35,7 @@ export class StoreSuggestion {
       }
     }
 
+
     await database.storeSuggestion.create({
       data: {
         storeId,
@@ -40,5 +45,38 @@ export class StoreSuggestion {
         tradeName: result.tradeName,
       },
     });
+  }
+
+
+  static async isUnique(acronym: string, cnpj: string) {
+    const withAcronym = await Store.findOneByAcronym(acronym);
+    const withCnpj = await Store.findOneByCpnj(cnpj);
+
+    return !withAcronym && !withCnpj;
+  }
+
+  static async findOneByAcronym(acronym: string) {
+    const result = await database.storeSuggestion.findUnique({
+      where: { acronym: acronym },
+    });
+
+    if (result) return new Store(result);
+    else return undefined;
+  }
+
+  static async findOneByCpnj(cnpj: string) {
+    const result = await database.storeSuggestion.findUnique({
+      where: { cnpj: cnpj },
+    });
+
+    if (result) return new Store(result);
+    else return undefined;
+  }
+
+  static async findMany() {
+    const result = await database.storeSuggestion.findMany();
+
+    if (result.length) return result.map((store) => new Store(store));
+    else return [];
   }
 }
