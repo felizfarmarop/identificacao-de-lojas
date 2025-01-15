@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -28,12 +29,14 @@ export default function EmpresaTable() {
   const [printList, setPrintList] = useState<string[]>([]);
   const [isPrintListExpanded, setIsPrintListExpanded] = useState(false);
   const [stores, setStores] = useState<Store[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/store/list")
       .then((res) => res.json())
       .then((data: { stores: Store[] }) => {
         setStores(data.stores);
+        setIsLoading(false);
       });
   }, []);
 
@@ -95,149 +98,160 @@ export default function EmpresaTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredEmpresas.map((store, index) => (
-              <TableRow key={index}>
+            {isLoading ? (
+              <TableRow>
                 <TableCell>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex items-center space-x-2 group">
-                          <Button
-                            variant="link"
-                            onClick={() => addToPrintList(store.acronym)}
-                          >
-                            {store.acronym}
-                          </Button>
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <FutureFeaturesModal
-                              actionType="edit"
-                              fieldName="Sigla"
-                              companyName={store.tradeName}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 p-0"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </FutureFeaturesModal>
-                          </span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Clique para adicionar à lista de impressão</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TableCell>
-                <TableCell>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex items-center space-x-2 group cursor-pointer">
-                          <Button
-                            variant="link"
-                            className="p-0"
-                            onClick={() => copyToClipboard(store.tradeName)}
-                          >
-                            {store.tradeName}
-                          </Button>
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <FutureFeaturesModal
-                              actionType="edit"
-                              fieldName="Nome Fantasia"
-                              companyName={store.tradeName}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 p-0"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </FutureFeaturesModal>
-                          </span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Clique para copiar</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TableCell>
-                <TableCell>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex items-center space-x-2 group cursor-pointer">
-                          <Button
-                            variant="link"
-                            className="p-0"
-                            onClick={() => copyToClipboard(store.companyName)}
-                          >
-                            {store.companyName}
-                          </Button>
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <FutureFeaturesModal
-                              actionType="edit"
-                              fieldName="Razão Social"
-                              companyName={store.companyName}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 p-0"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </FutureFeaturesModal>
-                          </span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Clique para copiar</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TableCell>
-                <TableCell>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex items-center space-x-2 group cursor-pointer">
-                          <Button
-                            variant="link"
-                            className="p-0"
-                            onClick={() => copyToClipboard(store.cnpj, true)}
-                          >
-                            {store.cnpj}
-                          </Button>
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <FutureFeaturesModal
-                              actionType="edit"
-                              fieldName="CNPJ"
-                              companyName={store.companyName}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 p-0"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </FutureFeaturesModal>
-                          </span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Clique para copiar (sem pontuação)</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Button variant={"outline"} disabled>
+                    <Loader2 className="animate-spin" />
+                    Buscando informações atualizadas
+                  </Button>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              filteredEmpresas.map((store, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center space-x-2 group">
+                            <Button
+                              variant="link"
+                              onClick={() => addToPrintList(store.acronym)}
+                            >
+                              {store.acronym}
+                            </Button>
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <FutureFeaturesModal
+                                actionType="edit"
+                                fieldName="Sigla"
+                                companyName={store.tradeName}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </FutureFeaturesModal>
+                            </span>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Clique para adicionar à lista de impressão</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center space-x-2 group cursor-pointer">
+                            <Button
+                              variant="link"
+                              className="p-0"
+                              onClick={() => copyToClipboard(store.tradeName)}
+                            >
+                              {store.tradeName}
+                            </Button>
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <FutureFeaturesModal
+                                actionType="edit"
+                                fieldName="Nome Fantasia"
+                                companyName={store.tradeName}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </FutureFeaturesModal>
+                            </span>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Clique para copiar</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center space-x-2 group cursor-pointer">
+                            <Button
+                              variant="link"
+                              className="p-0"
+                              onClick={() => copyToClipboard(store.companyName)}
+                            >
+                              {store.companyName}
+                            </Button>
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <FutureFeaturesModal
+                                actionType="edit"
+                                fieldName="Razão Social"
+                                companyName={store.companyName}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </FutureFeaturesModal>
+                            </span>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Clique para copiar</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center space-x-2 group cursor-pointer">
+                            <Button
+                              variant="link"
+                              className="p-0"
+                              onClick={() => copyToClipboard(store.cnpj, true)}
+                            >
+                              {store.cnpj}
+                            </Button>
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <FutureFeaturesModal
+                                actionType="edit"
+                                fieldName="CNPJ"
+                                companyName={store.companyName}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </FutureFeaturesModal>
+                            </span>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Clique para copiar (sem pontuação)</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
         <FloatingPrintList
