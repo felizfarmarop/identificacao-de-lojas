@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import EmpresaTable from '../components/EmpresaTable'
+import EmpresaTable from "../components/StoreTable";
 
 export default function Home() {
   return (
@@ -8,6 +8,5 @@ export default function Home() {
       <h1 className="text-2xl font-bold mb-4">Tabela de Empresas</h1>
       <EmpresaTable />
     </main>
-  )
+  );
 }
-
