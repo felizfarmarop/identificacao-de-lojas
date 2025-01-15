@@ -6,7 +6,6 @@ export const idSchema = z
   .string()
   .refine((id) => ObjectId.isValid(id), "ID deve ser um ObjectID Válido");
 
-
 export const acronymSchema = z
   .string({ required_error: "ACRONYM é um campo obrigatório" })
   .min(1, "ACRONYM não pode ser um campo vazio.")
@@ -35,12 +34,43 @@ export const tradeNameSchema = z
   .min(1, "TRADE_NAME não pode ser um campo vazio.")
   .transform((a) => a.toUpperCase());
 
-export const StoreSchema = z.object({
+export const votesSchema = z.number({
+  required_error: "VOTES é um campo obrigatório.",
+  invalid_type_error: "VOTES deve ser um número válido.",
+});
 
+export const suggestionFieldAcronymSchema = z.object({
+  votes: votesSchema,
+  value: acronymSchema,
+});
+export const suggestionFieldTradeNameSchema = z.object({
+  votes: votesSchema,
+  value: tradeNameSchema,
+});
+export const suggestionFieldCompanyNameSchema = z.object({
+  votes: votesSchema,
+  value: companyNameSchema,
+});
+export const suggestionFieldCnpjSchema = z.object({
+  votes: votesSchema,
+  value: cnpjSchema,
+});
+
+const StoreSuggestionSchema = z.object({
   id: idSchema,
+  storeId: idSchema,
+  acronym: suggestionFieldAcronymSchema,
+  cnpj: suggestionFieldCnpjSchema,
+  companyName: suggestionFieldCompanyNameSchema,
+  tradeName: suggestionFieldTradeNameSchema,
+  votes: votesSchema,
+});
 
+export const StoreSchema = z.object({
+  id: idSchema,
   acronym: acronymSchema,
   cnpj: cnpjSchema,
   companyName: companyNameSchema,
   tradeName: tradeNameSchema,
+  suggestions: z.array(StoreSuggestionSchema),
 });
