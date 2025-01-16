@@ -1,6 +1,6 @@
 import database from "@/infra/database";
 import { Prisma } from "@prisma/client";
-import { StoreSchema } from "./store.validator";
+import { StoreWithoutIdSchema } from "./store.validator";
 import { ZodError } from "zod";
 import { InternalError } from "@/infra/error";
 import { HttpStatusCode } from "@/infra/httpStatusCode";
@@ -10,8 +10,10 @@ type StoreWithSuggestions = Prisma.StoreGetPayload<{
     suggestions: true;
   };
 }>;
+export type StoreFields = "acronym" | "cnpj" | "companyName" | "tradeName";
 
 export class Store {
+  id: StoreWithSuggestions["id"];
   acronym: StoreWithSuggestions["acronym"];
   tradeName: StoreWithSuggestions["tradeName"];
   companyName: StoreWithSuggestions["companyName"];
@@ -19,6 +21,7 @@ export class Store {
   suggestions?: StoreWithSuggestions["suggestions"];
 
   constructor(props: StoreWithSuggestions) {
+    this.id = props.id;
     this.acronym = props.acronym;
     this.tradeName = props.tradeName;
     this.companyName = props.companyName;
@@ -26,18 +29,21 @@ export class Store {
     this.suggestions = props.suggestions;
   }
 
-  static async create(props: StoreWithSuggestions) {
+  static async create(props: Partial<StoreWithSuggestions>) {
+    delete props.suggestions;
+    delete props.id;
+
     let result = props;
 
     try {
-      result = StoreSchema.parse(props);
+      result = StoreWithoutIdSchema.parse(props);
     } catch (err) {
       if (err instanceof ZodError) {
         throw err;
       }
     }
 
-    if (await Store.isUnique(result.acronym, result.cnpj)) {
+    if (await Store.isUnique(result.acronym!, result.cnpj!)) {
       throw new InternalError({
         message: "This store is not unique",
         statusCode: HttpStatusCode.UNAUTHORIZED,
@@ -46,10 +52,10 @@ export class Store {
 
     await database.store.create({
       data: {
-        acronym: result.acronym,
-        cnpj: result.cnpj,
-        companyName: result.companyName,
-        tradeName: result.tradeName,
+        acronym: result.acronym!,
+        cnpj: result.cnpj!,
+        companyName: result.companyName!,
+        tradeName: result.tradeName!,
       },
     });
   }

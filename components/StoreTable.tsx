@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { ListRestart, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { copyToClipboard, type StoreWithSuggestion } from "./utils";
 import {
@@ -15,10 +15,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import FloatingPrintList from "./FloatingPrintList";
-import { FutureFeaturesModal } from "./FutureFeaturesModal";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ShareButton from "./ShareButton";
 import CustomTable from "./Table/CustomTable";
+import { FutureFeaturesModal } from "./FutureFeaturesModal";
 
 export default function EmpresaTable() {
   const [filter, setFilter] = useState("");
@@ -26,15 +26,22 @@ export default function EmpresaTable() {
   const [isPrintListExpanded, setIsPrintListExpanded] = useState(false);
   const [stores, setStores] = useState<StoreWithSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [state, updateState] = useState(0);
 
   useEffect(() => {
+    setIsLoading(true);
+
     fetch("/api/store/list")
       .then((res) => res.json())
       .then((data: { stores: StoreWithSuggestion[] }) => {
         setStores(data.stores);
         setIsLoading(false);
       });
-  }, []);
+  }, [state]);
+
+  const updateList = () => {
+    updateState((v) => v + 1);
+  };
 
   const filteredStores = stores.filter((store) => {
     const searchTerm = filter.toLowerCase();
@@ -56,7 +63,10 @@ export default function EmpresaTable() {
   return (
     <TooltipProvider>
       <div>
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4 gap-4">
+          <Button variant={"outline"} onClick={updateList}>
+            <ListRestart /> Atualizar Lista
+          </Button>
           <FutureFeaturesModal actionType="add">
             <Button>
               <Plus className="mr-2 h-4 w-4" /> Sugerir Nova Empresa
@@ -67,7 +77,7 @@ export default function EmpresaTable() {
             placeholder="Filtrar empresas..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="ml-4 mr-4 w-full"
+            className="w-full"
           />
           <ShareButton />
         </div>
@@ -91,13 +101,14 @@ export default function EmpresaTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredStores.map((store, index) => (
+              filteredStores.map((_, index) => (
                 <TableRow key={index}>
                   {
                     CustomTable({
                       stores: stores,
                       action: addToPrintList,
                       field: "acronym",
+                      updateList,
                     })[index]
                   }
                   {
@@ -105,6 +116,7 @@ export default function EmpresaTable() {
                       stores: stores,
                       action: copyToClipboard,
                       field: "tradeName",
+                      updateList,
                     })[index]
                   }
                   {
@@ -112,6 +124,7 @@ export default function EmpresaTable() {
                       stores: stores,
                       action: copyToClipboard,
                       field: "companyName",
+                      updateList,
                     })[index]
                   }
                   {
@@ -119,6 +132,7 @@ export default function EmpresaTable() {
                       stores: stores,
                       action: (v) => copyToClipboard(v, true),
                       field: "cnpj",
+                      updateList,
                     })[index]
                   }
                 </TableRow>
