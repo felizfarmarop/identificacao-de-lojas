@@ -1,7 +1,6 @@
 import { Middleware, controller } from "@/infra/controller";
 import { HttpStatusCode } from "@/infra/httpStatusCode";
 import { StoreSchema } from "@/models/store.validator";
-// import { StoreSuggestion } from "@/models/storeSuggestion.model";
 import { Store as TStore } from "@prisma/client";
 
 const handleCreateSuggestion: Middleware<TStore> = async (req) => {
