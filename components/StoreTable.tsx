@@ -18,7 +18,7 @@ import FloatingPrintList from "./FloatingPrintList";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ShareButton from "./ShareButton";
 import CustomTable from "./Table/CustomTable";
-import { FutureFeaturesModal } from "./FutureFeaturesModal";
+import { AddCompanyModal } from "./AddCompanyModal";
 
 export default function EmpresaTable() {
   const [filter, setFilter] = useState("");
@@ -41,6 +41,10 @@ export default function EmpresaTable() {
 
   const updateList = () => {
     updateState((v) => v + 1);
+  };
+
+  const updateFilter = (value: string) => {
+    setFilter(value);
   };
 
   const filteredStores = stores.filter((store) => {
@@ -67,11 +71,11 @@ export default function EmpresaTable() {
           <Button variant={"outline"} onClick={updateList}>
             <ListRestart /> Atualizar Lista
           </Button>
-          <FutureFeaturesModal actionType="add">
+          <AddCompanyModal updateFilter={updateFilter} updateList={updateList}>
             <Button>
               <Plus className="mr-2 h-4 w-4" /> Sugerir Nova Empresa
             </Button>
-          </FutureFeaturesModal>
+          </AddCompanyModal>
           <Input
             type="text"
             placeholder="Filtrar empresas..."

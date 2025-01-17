@@ -19,6 +19,7 @@ export class Store {
   companyName: StoreWithSuggestions["companyName"];
   cnpj: StoreWithSuggestions["cnpj"];
   suggestions?: StoreWithSuggestions["suggestions"];
+  verified?: boolean = true;
 
   constructor(props: StoreWithSuggestions) {
     this.id = props.id;
@@ -27,6 +28,7 @@ export class Store {
     this.companyName = props.companyName;
     this.cnpj = props.cnpj;
     this.suggestions = props.suggestions;
+    this.verified = props.verified;
   }
 
   static async create(props: Partial<StoreWithSuggestions>) {
@@ -43,19 +45,20 @@ export class Store {
       }
     }
 
-    if (await Store.isUnique(result.acronym!, result.cnpj!)) {
+    if (!(await Store.isUnique(result.acronym!, result.cnpj!))) {
       throw new InternalError({
-        message: "This store is not unique",
+        message: "Essa loja não é a unica com esses dados informados",
         statusCode: HttpStatusCode.UNAUTHORIZED,
       });
     }
 
-    await database.store.create({
+    return await database.store.create({
       data: {
         acronym: result.acronym!,
         cnpj: result.cnpj!,
         companyName: result.companyName!,
         tradeName: result.tradeName!,
+        verified: false,
       },
     });
   }
@@ -63,6 +66,20 @@ export class Store {
   static async isUnique(acronym: string, cnpj: string) {
     const withAcronym = await Store.findOneByAcronym(acronym);
     const withCnpj = await Store.findOneByCpnj(cnpj);
+
+    if (withAcronym) {
+      throw new InternalError({
+        message: "Já existe uma empresa cadastrada com a sigla " + acronym,
+        statusCode: HttpStatusCode.FORBIDDEN,
+      });
+    }
+
+    if (withCnpj) {
+      throw new InternalError({
+        message: "Já existe uma empresa cadastrada com o cnpj " + cnpj,
+        statusCode: HttpStatusCode.FORBIDDEN,
+      });
+    }
 
     return !withAcronym && !withCnpj;
   }
