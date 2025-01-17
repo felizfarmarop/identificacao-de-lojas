@@ -105,7 +105,7 @@ export default function EmpresaTable() {
                 <TableRow key={index}>
                   {
                     CustomTable({
-                      stores: stores,
+                      stores: filteredStores,
                       action: addToPrintList,
                       field: "acronym",
                       updateList,
@@ -113,7 +113,7 @@ export default function EmpresaTable() {
                   }
                   {
                     CustomTable({
-                      stores: stores,
+                      stores: filteredStores,
                       action: copyToClipboard,
                       field: "tradeName",
                       updateList,
@@ -121,7 +121,7 @@ export default function EmpresaTable() {
                   }
                   {
                     CustomTable({
-                      stores: stores,
+                      stores: filteredStores,
                       action: copyToClipboard,
                       field: "companyName",
                       updateList,
@@ -129,7 +129,7 @@ export default function EmpresaTable() {
                   }
                   {
                     CustomTable({
-                      stores: stores,
+                      stores: filteredStores,
                       action: (v) => copyToClipboard(v, true),
                       field: "cnpj",
                       updateList,
