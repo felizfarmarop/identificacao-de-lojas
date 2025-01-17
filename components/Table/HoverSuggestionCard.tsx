@@ -7,12 +7,13 @@ import {
 import { Button } from "../ui/button";
 import { Loader2, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useState } from "react";
+import { Badge } from "../ui/badge";
 
 export function HoverSuggestionCard(props: {
   value: string;
   field: keyof Omit<Store, "id">;
   suggestions: StoreSuggestion[];
-  addToPrintList: (value: string) => void;
+  execute: (value: string) => void;
   updateList: () => void;
   action: "print" | "copy";
 }) {
@@ -87,7 +88,7 @@ export function HoverSuggestionCard(props: {
         <Button
           variant="link"
           title={hoverTitle}
-          onClick={() => props.addToPrintList(value)}
+          onClick={() => props.execute(value)}
         >
           {value}
         </Button>
@@ -127,13 +128,24 @@ export function HoverSuggestionCard(props: {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <Button
-          variant="link"
-          onClick={() => props.addToPrintList(props.value)}
-          title={hoverTitle}
-        >
-          {props.value}
-        </Button>
+        <span>
+          <Button
+            variant="link"
+            onClick={() => props.execute(props.value)}
+            title={hoverTitle}
+          >
+            {props.value}
+          </Button>
+          {filteredSuggestions.length > 0 && (
+            <Badge
+              variant={"secondary"}
+              className="rounded-xl"
+              title={`Esse campo possui ${filteredSuggestions.length} sugestões de alteração.`}
+            >
+              +{filteredSuggestions.length}
+            </Badge>
+          )}
+        </span>
       </HoverCardTrigger>
       <HoverCardContent className="flex flex-col w-auto">
         {SuggestionsAtField.length ? (
