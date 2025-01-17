@@ -14,6 +14,7 @@ model Store {
   companyName String
   cnpj        String
   suggestions StoreSuggestion[]
+  verified    Boolean           @default(true)
 }
 
 model StoreSuggestion {

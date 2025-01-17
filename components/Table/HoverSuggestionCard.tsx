@@ -5,13 +5,14 @@ import {
   HoverCardTrigger,
 } from "../ui/hover-card";
 import { Button } from "../ui/button";
-import { Loader2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { CircleAlert, Loader2, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "../ui/badge";
 
 export function HoverSuggestionCard(props: {
+  verified: boolean;
   value: string;
-  field: keyof Omit<Store, "id">;
+  field: keyof Omit<Store, "id" | "verified">;
   suggestions: StoreSuggestion[];
   execute: (value: string) => void;
   updateList: () => void;
@@ -128,18 +129,26 @@ export function HoverSuggestionCard(props: {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <span>
+        <span className="flex">
           <Button
             variant="link"
             onClick={() => props.execute(props.value)}
-            title={hoverTitle}
+            title={
+              hoverTitle +
+              (!props.verified
+                ? "\n\nEssas informações não foram verificadas!!"
+                : "")
+            }
           >
+            {!props.verified && (
+              <CircleAlert className="text-red-500 text-sm" />
+            )}
             {props.value}
           </Button>
           {filteredSuggestions.length > 0 && (
             <Badge
               variant={"secondary"}
-              className="rounded-xl"
+              className="rounded-xl h-fit self-center"
               title={`Esse campo possui ${filteredSuggestions.length} sugestões de alteração.`}
             >
               +{filteredSuggestions.length}
