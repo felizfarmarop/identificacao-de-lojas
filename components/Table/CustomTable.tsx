@@ -33,7 +33,7 @@ export default function CustomTable(props: CustomTableProps) {
       <TableCell key={field + index}>
         <div className="flex items-center space-x-2 group">
           <HoverSuggestionCard
-            addToPrintList={props.action}
+            execute={props.action}
             updateList={props.updateList}
             suggestions={suggestions}
             action={tooltipAction}
